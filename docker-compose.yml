@@ -1,0 +1,56 @@
+version: '2'
+networks:
+  default:
+    driver: bridge
+services:
+  php:
+    networks:
+      - default
+    image: yiisoftware/yii2-php:8.3-fpm-nginx
+    depends_on:
+      - mysql-db
+    volumes:
+      - ~/.composer-docker/cache:/root/.composer/cache:delegated
+      - ./:/app:delegated
+    ports:
+      - '8000:80'
+  redis:
+    networks:
+      - default
+    image: redis:latest
+    hostname: redis
+    container_name: redis_container
+    environment:
+        - REDIS_PASSWORD=${REDIS_PASSWORD}
+        - REDIS_USER=${REDIS_USER}
+        - REDIS_USER_PASSWORD=${REDIS_USER_PASSWORD}
+    ports:
+        - "${REDIS_PORT}:6379"
+    volumes:
+        - ./docker/redisdata:/data
+    command: >
+        sh -c '
+          mkdir -p /usr/local/etc/redis &&
+          echo "requirepass $REDIS_PASSWORD" >> /usr/local/etc/redis/redis.conf &&
+          echo "appendonly yes" >> /usr/local/etc/redis/redis.conf &&
+          echo "appendfsync everysec" >> /usr/local/etc/redis/redis.conf &&
+          echo "user default on nopass ~* +@all" > /usr/local/etc/redis/users.acl &&
+          echo "user $REDIS_USER on >$REDIS_USER_PASSWORD ~* +@all" >> /usr/local/etc/redis/users.acl &&
+          redis-server /usr/local/etc/redis/redis.conf --aclfile /usr/local/etc/redis/users.acl
+        '
+    restart: unless-stopped
+    tty: true
+    stdin_open: true
+  mysql-db:
+    networks:
+      - default
+    image: mysql
+    ports:
+      - "${DB_PORT}:3306"
+    restart: always
+    environment:
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD_ROOT}
+    volumes:
+      - ./docker/mysql/var/lib:/var/lib/mysql
