@@ -43,6 +43,12 @@ docker compose exec php composer install
 docker compose exec php composer update
 ```
 
+Применение миграций
+```bash
+
+docker compose exec php ./yii migrate
+```
+
 После запуска Docker и внесения необходимых настроек в .env 
 проект будет доступен по адресу http://127.0.0.1:8000/ 
 
