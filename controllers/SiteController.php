@@ -53,6 +53,7 @@ class SiteController extends Controller
             if ($model->validate()) {
                 $command = new QrCodeCommand($model->url);
                 [$url, $qrCode] = $this->bus->handle($command);
+
                 return $this->asJson([
                     'error' => false,
                     'url' => Html::a($url, $url),

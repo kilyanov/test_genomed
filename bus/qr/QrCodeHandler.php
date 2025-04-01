@@ -33,7 +33,7 @@ class QrCodeHandler
             }
         }
 
-        $link = Yii::$app->request->getAbsoluteUrl() . 'url/' . $model->generalUrl;
+        $link = Yii::$app->request->getAbsoluteUrl() . 'data/' . $model->generalUrl;
         $format = new UrlFormat(['url' => $command->getUrl()]);
         $qrCode = new QrCode($format);
         try {

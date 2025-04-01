@@ -26,7 +26,7 @@ class m250401_105209_create_count_click_table extends Migration
             'updatedAt' => $this->dateTime()->notNull(),
         ], Yii::$app->params['tableOptions']);
         $this->createIndex(
-            'idx-idCode-count_click-' . self::TABLE_NAME,
+            'idx-idCode-' . self::TABLE_NAME,
             $this->table,
             'idCode'
         );

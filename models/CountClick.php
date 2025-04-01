@@ -2,6 +2,7 @@
 
 namespace app\models;
 
+use app\behaviors\IpBehavior;
 use app\models\query\CountClickQuery;
 use app\models\query\QrCodeQuery;
 use ext\behaviors\IdAttributeBehavior;
@@ -65,6 +66,9 @@ class CountClick extends ActiveRecord
             'IdAttributeBehavior' => [
                 'class' => IdAttributeBehavior::class,
             ],
+            'IpBehavior' => [
+                'class' => IpBehavior::class,
+            ]
         ];
     }
 

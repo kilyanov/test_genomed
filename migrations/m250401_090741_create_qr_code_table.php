@@ -23,12 +23,7 @@ class m250401_090741_create_qr_code_table extends Migration
             'updatedAt' => $this->dateTime()->notNull(),
         ], Yii::$app->params['tableOptions']);
         $this->createIndex(
-            'idx-url-qr_code-' . self::TABLE_NAME,
-            $this->table,
-            'idCode'
-        );
-        $this->createIndex(
-            'idx-generalUrl-qr_code-' . self::TABLE_NAME,
+            'idx-generalUrl-' . self::TABLE_NAME,
             $this->table,
             'generalUrl'
         );
