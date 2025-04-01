@@ -2,127 +2,79 @@
 
 namespace app\controllers;
 
+use app\bus\qr\QrCodeCommand;
+use app\models\UrlForm;
+use League\Tactician\CommandBus;
 use Yii;
-use yii\filters\AccessControl;
+use yii\bootstrap5\Alert;
+use yii\bootstrap5\Html;
 use yii\web\Controller;
 use yii\web\Response;
-use yii\filters\VerbFilter;
-use app\models\LoginForm;
-use app\models\ContactForm;
 
 class SiteController extends Controller
 {
     /**
-     * {@inheritdoc}
+     * @param $id
+     * @param $module
+     * @param CommandBus $bus
+     * @param array $config
      */
-    public function behaviors()
+    public function __construct(
+        $id,
+        $module,
+        protected CommandBus $bus,
+        array $config = []
+    )
     {
-        return [
-            'access' => [
-                'class' => AccessControl::class,
-                'only' => ['logout'],
-                'rules' => [
-                    [
-                        'actions' => ['logout'],
-                        'allow' => true,
-                        'roles' => ['@'],
-                    ],
-                ],
-            ],
-            'verbs' => [
-                'class' => VerbFilter::class,
-                'actions' => [
-                    'logout' => ['post'],
-                ],
-            ],
-        ];
+        parent::__construct($id, $module, $config);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function actions()
+    public function actions(): array
     {
         return [
             'error' => [
-                'class' => 'yii\web\ErrorAction',
-            ],
-            'captcha' => [
-                'class' => 'yii\captcha\CaptchaAction',
-                'fixedVerifyCode' => YII_ENV_TEST ? 'testme' : null,
+                'class' => yii\web\ErrorAction::class,
             ],
         ];
     }
 
     /**
-     * Displays homepage.
-     *
-     * @return string
+     * @return string|Response
+     * @throws \Throwable
      */
-    public function actionIndex()
+    public function actionIndex(): Response|string
     {
-        return $this->render('index');
-    }
+        $model = new UrlForm();
 
-    /**
-     * Login action.
-     *
-     * @return Response|string
-     */
-    public function actionLogin()
-    {
-        if (!Yii::$app->user->isGuest) {
-            return $this->goHome();
+        if ($model->load(Yii::$app->request->post())) {
+            if ($model->validate()) {
+                $command = new QrCodeCommand($model->url);
+                [$url, $qrCode] = $this->bus->handle($command);
+                return $this->asJson([
+                    'error' => false,
+                    'url' => Html::a($url, $url),
+                    'qrCode' => $qrCode->writeDataUri(),
+                ]);
+            }
+            else {
+                return $this->asJson([
+                    'error' => true,
+                    'massage' => Alert::widget([
+                        'options' => [ 'class' => 'alert-warning'],
+                        'body' => implode(',', $model->getErrorSummary(true))
+                    ])
+                ]);
+            }
         }
 
-        $model = new LoginForm();
-        if ($model->load(Yii::$app->request->post()) && $model->login()) {
-            return $this->goBack();
-        }
-
-        $model->password = '';
-        return $this->render('login', [
-            'model' => $model,
-        ]);
-    }
-
-    /**
-     * Logout action.
-     *
-     * @return Response
-     */
-    public function actionLogout()
-    {
-        Yii::$app->user->logout();
-
-        return $this->goHome();
-    }
-
-    /**
-     * Displays contact page.
-     *
-     * @return Response|string
-     */
-    public function actionContact()
-    {
-        $model = new ContactForm();
-        if ($model->load(Yii::$app->request->post()) && $model->contact(Yii::$app->params['adminEmail'])) {
-            Yii::$app->session->setFlash('contactFormSubmitted');
-
-            return $this->refresh();
-        }
-        return $this->render('contact', [
-            'model' => $model,
-        ]);
-    }
-
-    /**
-     * Displays about page.
-     *
-     * @return string
-     */
-    public function actionAbout()
-    {
-        return $this->render('about');
+        return $this->render(
+            'index',
+            [
+                'model' => $model
+            ]
+        );
     }
 }

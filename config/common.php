@@ -19,7 +19,7 @@ return [
             CommandBus::class => static function () {
                 $locator = new ServiceLocator([
                     'components' => [
-
+                        app\bus\qr\QrCodeCommand::class => app\bus\qr\QrCodeHandler::class,
                     ],
                 ]);
 

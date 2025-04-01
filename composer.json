@@ -29,7 +29,8 @@
         "monolog/monolog": "^2.10",
         "ext-intl": "*",
         "yiisoft/cache-redis": "^2.0",
-        "yiisoft/yii2-redis": "^2.0.18"
+        "yiisoft/yii2-redis": "^2.0.18",
+        "2amigos/yii2-qrcode-helper": "*"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.1.0",
