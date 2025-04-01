@@ -6,7 +6,7 @@ services:
   php:
     networks:
       - default
-    image: yiisoftware/yii2-php:8.3-fpm-nginx
+    image: yiisoftware/yii2-php:8.2-fpm-nginx
     depends_on:
       - mysql-db
     volumes:
@@ -14,12 +14,10 @@ services:
       - ./:/app:delegated
     ports:
       - '8000:80'
-  redis:
+  redis-db:
     networks:
       - default
     image: redis:latest
-    hostname: redis
-    container_name: redis_container
     environment:
         - REDIS_PASSWORD=${REDIS_PASSWORD}
         - REDIS_USER=${REDIS_USER}
@@ -49,6 +47,7 @@ services:
       - "${DB_PORT}:3306"
     restart: always
     environment:
+      MYSQL_DATABASE: ${DB_DATABASE}
       MYSQL_USER: ${DB_USER}
       MYSQL_PASSWORD: ${DB_PASSWORD}
       MYSQL_ROOT_PASSWORD: ${DB_PASSWORD_ROOT}

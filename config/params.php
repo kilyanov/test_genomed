@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'adminEmail' => 'admin@example.com',
-    'senderEmail' => 'noreply@example.com',
-    'senderName' => 'Example.com mailer',
+    'token_access_expire' => 24 * 60 * 60,
+    'token_refresh_expire' => 10 * 24 * 60 * 60,
+    'tableOptions' => 'CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE=InnoDB',
 ];

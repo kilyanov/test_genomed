@@ -1,22 +1,17 @@
 <?php
 
-$params = require __DIR__ . '/params.php';
-$db = require __DIR__ . '/db.php';
+use yii\console\controllers\MigrateController;
+use yii\helpers\ArrayHelper;
 
 $config = [
-    'id' => 'basic-console',
+    'id' => 'console',
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
     'controllerNamespace' => 'app\commands',
     'aliases' => [
-        '@bower' => '@vendor/bower-asset',
-        '@npm'   => '@vendor/npm-asset',
         '@tests' => '@app/tests',
     ],
     'components' => [
-        'cache' => [
-            'class' => 'yii\caching\FileCache',
-        ],
         'log' => [
             'targets' => [
                 [
@@ -25,26 +20,28 @@ $config = [
                 ],
             ],
         ],
-        'db' => $db,
     ],
-    'params' => $params,
-    /*
     'controllerMap' => [
+        'migrate' => [
+            'class' => MigrateController::class,
+            'migrationTable' => '{{%migration}}',
+            'useTablePrefix' => true,
+            'migrationPath' => [
+                '@app/migrations',
+            ],
+            'interactive' => false,
+        ],
         'fixture' => [ // Fixture generation command line.
             'class' => 'yii\faker\FixtureController',
         ],
     ],
-    */
 ];
 
 if (YII_ENV_DEV) {
-    // configuration adjustments for 'dev' environment
     $config['bootstrap'][] = 'gii';
     $config['modules']['gii'] = [
         'class' => 'yii\gii\Module',
     ];
-    // configuration adjustments for 'dev' environment
-    // requires version `2.1.21` of yii2-debug module
     $config['bootstrap'][] = 'debug';
     $config['modules']['debug'] = [
         'class' => 'yii\debug\Module',
@@ -53,4 +50,4 @@ if (YII_ENV_DEV) {
     ];
 }
 
-return $config;
+return ArrayHelper::merge(require(__DIR__ . DIRECTORY_SEPARATOR . 'common.php'), $config);
