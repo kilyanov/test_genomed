@@ -105,5 +105,4 @@ class CountClick extends ActiveRecord
     {
         return new CountClickQuery(get_called_class());
     }
-
 }

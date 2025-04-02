@@ -89,5 +89,4 @@ class QrCode extends ActiveRecord
     {
         return new QrCodeQuery(get_called_class());
     }
-
 }
