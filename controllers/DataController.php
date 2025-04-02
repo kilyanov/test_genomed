@@ -17,18 +17,6 @@ class DataController extends Controller
      */
     public function actionIndex(string $url)
     {
-        /**
-         * $ip = '192.168.0.1';
-         * $binIp = inet_pton( $ip );
-         * echo bin2hex( $binIp );
-         * // > c0a80001
-         *
-         * # Пример использования inet_ntop() для преобразования двоичного представления IP-адреса в строку
-         * $binIp = hex2bin( 'c0a80001' );
-         * $ip = inet_ntop( $binIp );
-         * echo $ip;
-         * // > 192.168.0.1
-         */
         $modelCode = QrCode::findOne(['generalUrl' => $url]);
         if ($modelCode === null) {
             throw new Exception(sprintf('Указанный %s не найден.', $url));
