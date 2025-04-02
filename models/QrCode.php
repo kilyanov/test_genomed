@@ -17,7 +17,7 @@ use yii\db\ActiveRecord;
  * @property string $createdAt
  * @property string $updatedAt
  *
- * @property CountClick[] $countClicksRelations
+ * @property CountClick[] $countClicksRelation
  */
 class QrCode extends ActiveRecord
 {
